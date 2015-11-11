@@ -721,6 +721,16 @@ class PHPExcel_Calculation_LookupRef
         }
 
         $rowNumber = $rowValue = false;
+        
+        /* fix for not returning values most of the time, when they should have been found */
+		if(!$not_exact_match){
+			$new_lookup = array();
+			foreach ($lookup_array as $rowKey => $rowData) {
+				$new_lookup[strtolower($rowData[$firstColumn])] = $rowData[$returnColumn];
+			}			
+			return $new_lookup[strtolower($lookup_value)];
+		}
+		
         foreach ($lookup_array as $rowKey => $rowData) {
             if ((is_numeric($lookup_value) && is_numeric($rowData[$firstColumn]) && ($rowData[$firstColumn] > $lookup_value)) ||
                 (!is_numeric($lookup_value) && !is_numeric($rowData[$firstColumn]) && (strtolower($rowData[$firstColumn]) > strtolower($lookup_value)))) {
